@@ -186,68 +186,6 @@ protected void onStop() {
 
 }
 
-private void enableLoc() {
-
-    if (googleApiClient == null) {
-        googleApiClient = new GoogleApiClient.Builder(MainActivity.this)
-                .addApi(LocationServices.API)
-                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
-                    @Override
-                    public void onConnected(Bundle bundle) {
-
-                    }
-
-                    @Override
-                    public void onConnectionSuspended(int i) {
-                        googleApiClient.connect();
-                    }
-                })
-                .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
-                    @Override
-                    public void onConnectionFailed(ConnectionResult connectionResult) {
-
-                        Log.d("Location error","Location error " + connectionResult.getErrorCode());
-                    }
-                }).build();
-        googleApiClient.connect();
-
-        LocationRequest locationRequest = LocationRequest.create();
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(5000);
-        locationRequest.setFastestInterval(5000);
-        //locationRequest.setSmallestDisplacement(100*1000);
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-                .addLocationRequest(locationRequest);
-
-        builder.setAlwaysShow(true);
-
-
-        PendingResult<LocationSettingsResult> result =
-                LocationServices.SettingsApi.checkLocationSettings(googleApiClient, builder.build());
-        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
-            @Override
-            public void onResult(LocationSettingsResult result) {
-                final Status status = result.getStatus();
-                switch (status.getStatusCode()) {
-                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                        try {
-                            // Show the dialog by calling startResolutionForResult(),
-                            // and check the result in onActivityResult().
-                            status.startResolutionForResult(MainActivity.this, REQUEST_LOCATION);
-
-
-                        } catch (IntentSender.SendIntentException e) {
-                            // Ignore the error.
-                        }
-                        break;
-                }
-            }
-        });
-    }
-
-
-
-}
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -282,25 +220,14 @@ private void enableLoc() {
 
         if (!isnetworkEnabled || !isgpsEnabled) {
             Log.d("this", "CAN'T FIND LOCATION");
+
             enableLoc();
-
-
 
 
         }
 
         else {
 
-         /*   if(!isgpsEnabled)
-            {
-                enableLoc();
-            }
-
-            if(!isnetworkEnabled)
-            {
-                enableLoc();
-            }
-*/
             if (isnetworkEnabled) {
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
                         0,
@@ -317,17 +244,10 @@ private void enableLoc() {
                         longitude = location.getLongitude();
 
 
-
-                      /*LocationAddress locationAddress = new LocationAddress();
-                        locationAddress.getAddressFromLocation(latitude, longitude,
-                                getApplicationContext(), new GeocoderHandler());
-
-
-
-
-                       */
                       //Setting lat and lang in shared preferences....
                       setCoordinates();
+
+                      checkSharedPreferences();
 
                         lastknownLocation.setText("Network : Latitude = " + latitude + "\n"
                                 +"Network : Longitude = " + longitude);
@@ -350,16 +270,17 @@ private void enableLoc() {
 
                 if (locationManager != null) {
                     location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
                     if (location != null) {
+
                         latitude = location.getLatitude();
                         longitude = location.getLongitude();
 
-
-
-
-
                         //Setting lat and lang in shared preferences....
                         setCoordinates();
+
+                        checkSharedPreferences();
+
 
                         lastknownLocation.setText("GPS : Latitude = " + latitude + "\n"
                                +"GPS : longitude = " + longitude);
@@ -458,8 +379,8 @@ public void onRequestPermissionsResult(int requestCode, @NonNull String[] permis
 
 
 
-//HERE WE CALLING GEOCODER CLASS WHEN > 100KMS, IF NOT THEN GETTING CITY FROM SHARED PREFERENCES.....
-public void checkSharedPreferences(){
+    //HERE WE CALLING GEOCODER CLASS WHEN > 100KMS, IF NOT THEN GETTING CITY FROM SHARED PREFERENCES.....
+    public void checkSharedPreferences(){
 
     if(sharedPreferences.getFloat("latitude",0) !=0 && sharedPreferences.getFloat("longitude",0) != 0)
     {
@@ -483,8 +404,6 @@ public void checkSharedPreferences(){
         }
 }
 }
-
-
 
     //SETTING LAST_LAT AND LAST_LANG of Shared Preferences WHEN GEOCODER CALL HAS BEEN MADE....
     public static void setLastCoordinates()
@@ -527,5 +446,70 @@ public void checkSharedPreferences(){
     public double deg2rad(double deg) {
         return deg * (Math.PI/180);
     }
+
+    //IF GPS HAS BEEN TURNED OFF THEN WE CAN SHOW PROMPT THAT ASK USER TO SWITCH ON THE GPS....
+    private void enableLoc() {
+
+        if (googleApiClient == null) {
+            googleApiClient = new GoogleApiClient.Builder(MainActivity.this)
+                    .addApi(LocationServices.API)
+                    .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                        @Override
+                        public void onConnected(Bundle bundle) {
+
+                        }
+
+                        @Override
+                        public void onConnectionSuspended(int i) {
+                            googleApiClient.connect();
+                        }
+                    })
+                    .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
+                        @Override
+                        public void onConnectionFailed(ConnectionResult connectionResult) {
+
+                            Log.d("Location error","Location error " + connectionResult.getErrorCode());
+                        }
+                    }).build();
+            googleApiClient.connect();
+
+            LocationRequest locationRequest = LocationRequest.create();
+            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            locationRequest.setInterval(5000);
+            locationRequest.setFastestInterval(5000);
+            //locationRequest.setSmallestDisplacement(100*1000);
+            LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                    .addLocationRequest(locationRequest);
+
+            builder.setAlwaysShow(true);
+
+
+            PendingResult<LocationSettingsResult> result =
+                    LocationServices.SettingsApi.checkLocationSettings(googleApiClient, builder.build());
+            result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+                @Override
+                public void onResult(LocationSettingsResult result) {
+                    final Status status = result.getStatus();
+                    switch (status.getStatusCode()) {
+                        case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                            try {
+                                // Show the dialog by calling startResolutionForResult(),
+                                // and check the result in onActivityResult().
+                                status.startResolutionForResult(MainActivity.this, REQUEST_LOCATION);
+
+
+                            } catch (IntentSender.SendIntentException e) {
+                                // Ignore the error.
+                            }
+                            break;
+                    }
+                }
+            });
+        }
+
+
+
+    }
+
 
 }
