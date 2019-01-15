@@ -66,6 +66,7 @@ protected void onCreate(Bundle savedInstanceState) {
 
 
     sharedPreferences = getSharedPreferences(MyPREFERENCES,Context.MODE_PRIVATE);
+    sharedpreferencelatlon = findViewById(R.id.sharedpreferencelatlon);
 
     /*SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -73,7 +74,7 @@ protected void onCreate(Bundle savedInstanceState) {
     editor.putFloat("last_longitude",(float) 0.0);
     editor.apply();
 */
-    sharedpreferencelatlon = findViewById(R.id.sharedpreferencelatlon);
+
 
     Log.d("this","last_latitude - "+sharedPreferences.getFloat("last_latitude",0));
     Log.d("this","last_longitude - "+sharedPreferences.getFloat("last_longitude",0));
@@ -82,10 +83,13 @@ protected void onCreate(Bundle savedInstanceState) {
     sharedpreferencelatlon.setText("Latitude - "+sharedPreferences.getFloat("last_latitude",0) +
             "\n" +"Longitude - "+sharedPreferences.getFloat("last_longitude",0));
 
-    //getting the last city data from shared preferences....
+    
 
 
     //loader......
+
+
+    checkSharedPreferences();
 
     //Finding the coordinates....
     locationsearch();
