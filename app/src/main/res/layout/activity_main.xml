@@ -65,13 +65,14 @@
         />
 
     <Button
-        android:layout_gravity="bottom"
-        android:layout_width="100dp"
-        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:layout_width="80dp"
+        android:elevation="10dp"
+        android:layout_height="40dp"
         android:text="Allow GPS"
         android:textAllCaps="false"
-        android:background="@android:color/white"
-        android:textColor="@android:color/black"
+        android:background="@color/colorPrimary"
+        android:textColor="@android:color/white"
         android:id="@+id/allow_me"
         />
 
