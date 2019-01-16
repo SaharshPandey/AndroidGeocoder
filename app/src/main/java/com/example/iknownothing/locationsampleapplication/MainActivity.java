@@ -362,7 +362,7 @@ Log.d("this","Distance is "+distance+" kms");
                     locationAddress = null;
                     tvAddress.setText("This city is unavaliable");
 
-                    setLastCoordinates();
+                    //setLastCoordinates();
             }
 
         }
@@ -501,8 +501,8 @@ Log.d("this","Distance is "+distance+" kms");
 
             LocationRequest locationRequest = LocationRequest.create();
             locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-            locationRequest.setInterval(5000);
-            locationRequest.setFastestInterval(5000);
+            locationRequest.setInterval(0);
+            locationRequest.setFastestInterval(0);
             //locationRequest.setSmallestDisplacement(100*1000);
             LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
                     .addLocationRequest(locationRequest);
@@ -531,10 +531,8 @@ Log.d("this","Distance is "+distance+" kms");
                     }
                 }
             });
-        } else {
-            googleApiClient = null;
-
         }
+
 
 
     }
@@ -546,11 +544,13 @@ Log.d("this","Distance is "+distance+" kms");
 
                 locationsearch();
 
+
             }
             if (resultCode == MainActivity.RESULT_CANCELED) {
 
                 Toast.makeText(this, "Location is OFF", Toast.LENGTH_SHORT).show();
 
+                googleApiClient = null;
               //  progressDialog.dismiss();
 
                 if (!isgpsEnabled && !isnetworkEnabled) {
