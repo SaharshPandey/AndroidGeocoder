@@ -90,6 +90,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
             }
         });
+
+        sharedpreferencelatlon.setText("Latitude - " + sharedPreferences.getFloat("last_latitude", 0) +
+                "\n" + "Longitude - " + sharedPreferences.getFloat("last_longitude", 0));
     /*SharedPreferences.Editor editor = sharedPreferences.edit();
 
     editor.putFloat("last_latitude",(float) 0.0);
