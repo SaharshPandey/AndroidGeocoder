@@ -79,7 +79,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             public void onClick(View v) {
                 if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
                 {
-                    enableLoc();
+                    if(!isnetworkEnabled || !isgpsEnabled) {
+                        enableLoc();
+                    }
                 }
                 else{
                     ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 100);
@@ -100,11 +102,12 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         Log.d("this", "last_longitude - " + sharedPreferences.getFloat("last_longitude", 0));
         Log.d("this", "last_city - " + sharedPreferences.getString("last_city", ""));
 
-        sharedpreferencelatlon.setText("Latitude - " + sharedPreferences.getFloat("last_latitude", 0) +
+      /*  sharedpreferencelatlon.setText("Latitude - " + sharedPreferences.getFloat("last_latitude", 0) +
                 "\n" + "Longitude - " + sharedPreferences.getFloat("last_longitude", 0));
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Waiting for location");
 
+*/
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Waiting for location");  
 
         //loader......
 
@@ -330,6 +333,7 @@ Log.d("this","Distance is "+distance+" kms");
 
         public void handleMessage(Message message) {
 
+            Log.d("count","..................GEOCODER API CALLED...................");
 
             switch (message.what) {
                 case 1:
